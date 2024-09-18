@@ -1,18 +1,15 @@
-import { AccountDAODatabase, AccountDAOMemory } from "../src/AccountDAO";
+import { AccountRepositoryDatabase, AccountRepositoryMemory } from "../src/AccountRepository";
 import GetAccount from "../src/GetAccount";
 import { MailerGatewayMemory } from "../src/MailerGateway";
 import sinon from "sinon";
-import Signup from "../src/signup";
+import Signup from "../src/Signup";
 
 let signup: Signup;
 let getAccount: GetAccount;
 
 // Integration Narrow -> Broad
 beforeEach(() => {
-  const accountDAO = new AccountDAODatabase();
-  // fake
-  // const accountDAO = new AccountDAOMemory();
-  // fake
+  const accountDAO = new AccountRepositoryDatabase();
   const mailerGateway = new MailerGatewayMemory();
   signup = new Signup(accountDAO, mailerGateway);
   getAccount = new GetAccount(accountDAO);
@@ -33,7 +30,6 @@ test("Deve criar a conta de um passageiro", async function () {
   expect(outputGetAccount.email).toBe(input.email);
   expect(outputGetAccount.cpf).toBe(input.cpf);
   expect(outputGetAccount.password).toBe(input.password);
-  // expect(outputGetAccount.isPassenger).toBe(input.isPassenger);
 });
 
 test("Não deve criar a conta de um passageiro com nome inválido", async function () {
@@ -95,7 +91,7 @@ test("Não deve criar a conta de um motorista com placa inválida", async functi
 
 test("Deve criar a conta de um passageiro com stub", async function () {
   const mailerStub = sinon.stub(MailerGatewayMemory.prototype, "send").resolves();
-  const getAccountByEmail = sinon.stub(AccountDAODatabase.prototype, "getAccountByEmail").resolves();
+  const getAccountByEmail = sinon.stub(AccountRepositoryDatabase.prototype, "getAccountByEmail").resolves();
   const input = {
     name: "John Doe",
     email: `john.doe@gmail.com`,
@@ -135,7 +131,7 @@ test("Deve criar a conta de um passageiro com spy", async function () {
   mailerSpy.restore();
 });
 
-test.only("Deve criar a conta de um passageiro com mock", async function () {
+test("Deve criar a conta de um passageiro com mock", async function () {
   const mailerMock = sinon.mock(MailerGatewayMemory.prototype);
   const input = {
     name: "John Doe",
