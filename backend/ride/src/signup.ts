@@ -20,7 +20,7 @@ export default class Signup {
     await this.accountRepository.saveAccount(account);
     await this.mailerGateway.send(account.getEmail(), "Welcome!", "...");
     return {
-      accountId: account.accountId,
+      accountId: account.getAccountId(),
     };
   }
 }
