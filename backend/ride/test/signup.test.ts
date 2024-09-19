@@ -1,18 +1,20 @@
-import { AccountRepositoryDatabase, AccountRepositoryMemory } from "../src/AccountRepository";
 import GetAccount from "../src/GetAccount";
 import { MailerGatewayMemory } from "../src/MailerGateway";
 import sinon from "sinon";
 import Signup from "../src/Signup";
+import { Registry } from "../src/DI";
+import { AccountRepositoryDatabase } from "../src/AccountRepository";
 
 let signup: Signup;
 let getAccount: GetAccount;
 
-// Integration Narrow -> Broad
 beforeEach(() => {
-  const accountDAO = new AccountRepositoryDatabase();
+  const accountRepository = new AccountRepositoryDatabase();
   const mailerGateway = new MailerGatewayMemory();
-  signup = new Signup(accountDAO, mailerGateway);
-  getAccount = new GetAccount(accountDAO);
+  Registry.getInstance().provide("accountRepository", accountRepository);
+  Registry.getInstance().provide("mailerGateway", mailerGateway);
+  signup = new Signup();
+  getAccount = new GetAccount();
 });
 
 test("Deve criar a conta de um passageiro", async function () {
