@@ -12,9 +12,9 @@ export default class RequestRide {
   rideRepository?: RideRepository;
 
   async execute(input: Input): Promise<Output> {
-    // const account = await this.accountRepository?.getAccountById(input.passengerId);
-    // if (!account) throw new Error("Account does not exist");
-    // if (!account.isPassenger) throw new Error("Account must be from a passenger");
+    const account = await this.accountRepository?.getAccountById(input.passengerId);
+    if (!account) throw new Error("Account does not exist");
+    if (!account.isPassenger) throw new Error("Account must be from a passenger");
     const ride = Ride.create(input.passengerId, input.fromLat, input.fromLong, input.toLat, input.toLong);
     await this.rideRepository?.saveRide(ride);
     return {

@@ -52,4 +52,26 @@ describe("RequestRide", () => {
     expect(outputGetRide.toLong).toBe(inputRequestRide.toLong);
     expect(outputGetRide.status).toBe("requested");
   });
+
+  test("Não deve solicitar uma corrida se a conta não for de um passageiro", async function () {
+    const inputSignup = {
+      name: "John Doe",
+      email: `john.doe${Math.random()}@gmail.com`,
+      cpf: "97456321558",
+      password: "123456",
+      carPlate: "AAA9999",
+      isDriver: true,
+    };
+    const outputSignup = await signup.execute(inputSignup);
+    const inputRequestRide = {
+      passengerId: outputSignup.accountId,
+      fromLat: -27.584905257808835,
+      fromLong: -48.545022195325124,
+      toLat: -27.496887588317275,
+      toLong: -48.522234807851476,
+    };
+    await expect(() => requestRide.execute(inputRequestRide)).rejects.toThrow(
+      new Error("Account must be from a passenger")
+    );
+  });
 });
