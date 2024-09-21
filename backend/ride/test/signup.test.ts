@@ -1,18 +1,18 @@
-import GetAccount from "../src/GetAccount";
 import { MailerGatewayMemory } from "../src/MailerGateway";
 import sinon from "sinon";
 import Signup from "../src/Signup";
 import { Registry } from "../src/DI";
 import { AccountRepositoryDatabase } from "../src/AccountRepository";
+import { PgPromiseAdapter } from "../src/DatabaseConnection";
+import GetAccount from "../src/GetAccount";
 
 let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(() => {
-  const accountRepository = new AccountRepositoryDatabase();
-  const mailerGateway = new MailerGatewayMemory();
-  Registry.getInstance().provide("accountRepository", accountRepository);
-  Registry.getInstance().provide("mailerGateway", mailerGateway);
+  Registry.getInstance().provide("databaseConnection", new PgPromiseAdapter());
+  Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
+  Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory());
   signup = new Signup();
   getAccount = new GetAccount();
 });
@@ -124,4 +124,9 @@ test("Deve criar a conta de um passageiro com mock", async function () {
   expect(outputGetAccount.password).toBe(input.password);
   mailerMock.verify();
   mailerMock.restore();
+});
+
+afterEach(async () => {
+  const connection = Registry.getInstance().inject("databaseConnection");
+  await connection.close();
 });

@@ -1,4 +1,5 @@
 import { AccountRepositoryDatabase } from "../src/AccountRepository";
+import { PgPromiseAdapter } from "../src/DatabaseConnection";
 import { Registry } from "../src/DI";
 import GetAccount from "../src/GetAccount";
 import GetRide from "../src/GetRide";
@@ -14,12 +15,10 @@ describe("RequestRide", () => {
   let getRide: GetRide;
 
   beforeEach(() => {
-    const accountRepository = new AccountRepositoryDatabase();
-    const rideRepository = new RideRepositoryDatabase();
-    const mailerGateway = new MailerGatewayMemory();
-    Registry.getInstance().provide("accountRepository", accountRepository);
-    Registry.getInstance().provide("rideRepository", rideRepository);
-    Registry.getInstance().provide("mailerGateway", mailerGateway);
+    Registry.getInstance().provide("databaseConnection", new PgPromiseAdapter());
+    Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
+    Registry.getInstance().provide("rideRepository", new RideRepositoryDatabase());
+    Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory());
     signup = new Signup();
     getAccount = new GetAccount();
     requestRide = new RequestRide();
@@ -74,4 +73,9 @@ describe("RequestRide", () => {
       new Error("Account must be from a passenger")
     );
   });
+});
+
+afterEach(async () => {
+  const connection = Registry.getInstance().inject("databaseConnection");
+  await connection.close();
 });
