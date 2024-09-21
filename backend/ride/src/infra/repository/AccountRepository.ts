@@ -1,6 +1,6 @@
-import Account from "./Account";
-import { inject } from "./DI";
-import DatabaseConnection from "./DatabaseConnection";
+import Account from "../../domain/Account";
+import { inject } from "../di/DI";
+import DatabaseConnection from "../database/DatabaseConnection";
 
 // Port
 export default interface AccountRepository {

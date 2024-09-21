@@ -1,9 +1,9 @@
-import AccountRepository from "./AccountRepository";
-import MailerGateway from "./MailerGateway";
-import Account from "./Account";
-import { inject, Registry } from "./DI";
-import Ride from "./Ride";
-import RideRepository from "./RideRepository";
+import AccountRepository from "../../infra/repository/AccountRepository";
+import MailerGateway from "../../infra/gateway/MailerGateway";
+import Account from "../../domain/Account";
+import { inject, Registry } from "../../infra/di/DI";
+import Ride from "../../domain/Ride";
+import RideRepository from "../../infra/repository/RideRepository";
 
 export default class RequestRide {
   @inject("accountRepository")

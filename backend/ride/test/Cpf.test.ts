@@ -1,4 +1,4 @@
-import Cpf from "../src/Cpf";
+import Cpf from "../src/domain/Cpf";
 
 describe("validateCpf", () => {
   test.each(["41953697038", "71574446070"])("Deve validar um cpf válido %s", function (value: string) {

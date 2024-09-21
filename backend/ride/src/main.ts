@@ -1,11 +1,11 @@
-import { AccountRepositoryDatabase } from "./AccountRepository";
-import { MailerGatewayMemory } from "./MailerGateway";
-import GetAccount from "./GetAccount";
-import Signup from "./Signup";
-import { Registry } from "./DI";
-import { PgPromiseAdapter } from "./DatabaseConnection";
-import { ExpressAdapter } from "./HttpServer";
-import AccountController from "./AccountController";
+import { AccountRepositoryDatabase } from "./infra/repository/AccountRepository";
+import { MailerGatewayMemory } from "./infra/gateway/MailerGateway";
+import GetAccount from "./application/usecase/GetAccount";
+import Signup from "./application/usecase/Signup";
+import { Registry } from "./infra/di/DI";
+import { PgPromiseAdapter } from "./infra/database/DatabaseConnection";
+import { ExpressAdapter } from "./infra/http/HttpServer";
+import AccountController from "./infra/controller/AccountController";
 
 const httpServer = new ExpressAdapter();
 Registry.getInstance().provide("httpServer", httpServer);

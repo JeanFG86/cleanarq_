@@ -1,12 +1,12 @@
-import { AccountRepositoryDatabase } from "../src/AccountRepository";
-import { PgPromiseAdapter } from "../src/DatabaseConnection";
-import { Registry } from "../src/DI";
-import GetAccount from "../src/GetAccount";
-import GetRide from "../src/GetRide";
-import { MailerGatewayMemory } from "../src/MailerGateway";
-import RequestRide from "../src/RequestRide";
-import { RideRepositoryDatabase } from "../src/RideRepository";
-import Signup from "../src/Signup";
+import { AccountRepositoryDatabase } from "../src/infra/repository/AccountRepository";
+import { PgPromiseAdapter } from "../src/infra/database/DatabaseConnection";
+import { Registry } from "../src/infra/di/DI";
+import GetAccount from "../src/application/usecase/GetAccount";
+import GetRide from "../src/application/usecase/GetRide";
+import { MailerGatewayMemory } from "../src/infra/gateway/MailerGateway";
+import RequestRide from "../src/application/usecase/RequestRide";
+import { RideRepositoryDatabase } from "../src/infra/repository/RideRepository";
+import Signup from "../src/application/usecase/Signup";
 
 describe("RequestRide", () => {
   let signup: Signup;

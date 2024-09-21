@@ -1,6 +1,6 @@
-import AccountRepository from "./AccountRepository";
-import { inject } from "./DI";
-import Email from "./Email";
+import AccountRepository from "../../infra/repository/AccountRepository";
+import { inject } from "../../infra/di/DI";
+import Email from "../../domain/Email";
 
 export default class GetAccount {
   @inject("accountRepository")

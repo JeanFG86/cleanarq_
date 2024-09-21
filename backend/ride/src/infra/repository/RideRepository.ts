@@ -1,6 +1,6 @@
-import Ride from "./Ride";
-import { inject } from "./DI";
-import DatabaseConnection from "./DatabaseConnection";
+import Ride from "../../domain/Ride";
+import { inject } from "../di/DI";
+import DatabaseConnection from "../database/DatabaseConnection";
 
 export default interface RideRepository {
   saveRide(ride: Ride): Promise<void>;
