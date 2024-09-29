@@ -1,12 +1,14 @@
 import Coord from "../vo/Coord";
+import RideStatus, { RideStatusFactory } from "../vo/RideStatus";
 import UUID from "../vo/UUID";
 
 export default class Ride {
   private rideId: UUID;
   private passengerId: UUID;
+  private driverId?: UUID;
   private from: Coord;
   private to: Coord;
-  private status: string;
+  private status: RideStatus;
   private date: Date;
 
   constructor(
@@ -17,13 +19,15 @@ export default class Ride {
     toLat: number,
     toLong: number,
     status: string,
-    date: Date
+    date: Date,
+    driverId: string = ""
   ) {
     this.rideId = new UUID(rideId);
     this.passengerId = new UUID(passengerId);
+    if (driverId) this.driverId = new UUID(driverId);
     this.from = new Coord(fromLat, fromLong);
     this.to = new Coord(toLat, toLong);
-    this.status = status;
+    this.status = RideStatusFactory.create(status, this);
     this.date = date;
   }
 
@@ -31,7 +35,7 @@ export default class Ride {
     const uuid = UUID.create();
     const status = "requested";
     const date = new Date();
-    return new Ride(uuid.getValue(), passengerId, fromLat, fromLong, toLat, toLong, status, date);
+    return new Ride(uuid.getValue(), passengerId, fromLat, fromLong, toLat, toLong, status, date, "");
   }
 
   getRideId() {
@@ -40,6 +44,10 @@ export default class Ride {
 
   getPassengerId() {
     return this.passengerId.getValue();
+  }
+
+  getDriverId() {
+    return this.driverId?.getValue();
   }
 
   getFrom() {
@@ -51,7 +59,20 @@ export default class Ride {
   }
 
   getStatus() {
-    return this.status;
+    return this.status.value;
+  }
+
+  setStatus(status: RideStatus) {
+    this.status = status;
+  }
+
+  accept(driverId: string) {
+    this.status.accept();
+    this.driverId = new UUID(driverId);
+  }
+
+  start() {
+    this.status.start();
   }
 
   getDate() {

@@ -16,6 +16,7 @@ export default class GetRide {
       toLat: ride.getTo().getLat(),
       toLong: ride.getTo().getLong(),
       status: ride.getStatus(),
+      driverId: ride.getDriverId(),
     };
   }
 }
@@ -28,4 +29,5 @@ type Output = {
   toLat: number;
   toLong: number;
   status: string;
+  driverId?: string;
 };
