@@ -45,6 +45,8 @@ export class RideRepositoryDatabase implements RideRepository {
   }
 
   async updateRide(ride: Ride): Promise<void> {
+    console.log(ride);
+    console.log(ride.getStatus());
     await this.connection?.query("update ccca.ride set status = $1, driver_id = $2 where ride_id = $3", [
       ride.getStatus(),
       ride.getDriverId(),

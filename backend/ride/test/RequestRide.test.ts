@@ -7,6 +7,7 @@ import { MailerGatewayMemory } from "../src/infra/gateway/MailerGateway";
 import RequestRide from "../src/application/usecase/RequestRide";
 import { RideRepositoryDatabase } from "../src/infra/repository/RideRepository";
 import Signup from "../src/application/usecase/Signup";
+import { PositionRepositoryDatabase } from "../src/infra/repository/PositionRepository";
 
 describe("RequestRide", () => {
   let signup: Signup;
@@ -19,12 +20,13 @@ describe("RequestRide", () => {
     Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
     Registry.getInstance().provide("rideRepository", new RideRepositoryDatabase());
     Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory());
+    Registry.getInstance().provide("positionRepository", new PositionRepositoryDatabase());
     signup = new Signup();
     getAccount = new GetAccount();
     requestRide = new RequestRide();
     getRide = new GetRide();
   });
-  it("Deve solicitar uma corrida", async function () {
+  test("Deve solicitar uma corrida", async function () {
     const inputSignup = {
       name: "John Doe",
       email: `john.doe${Math.random()}@gmail.com`,
