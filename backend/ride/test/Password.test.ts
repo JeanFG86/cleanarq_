@@ -1,4 +1,4 @@
-import Password from "../src/domain/Password";
+import Password from "../src/domain/vo/Password";
 
 describe("Password Test", () => {
   it("Deve criar uma senha válida", function () {

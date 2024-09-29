@@ -1,4 +1,4 @@
-import Account from "../src/domain/Account";
+import Account from "../src/domain/entity/Account";
 
 describe("Account test", () => {
   it("Deve criar uma conta", () => {
