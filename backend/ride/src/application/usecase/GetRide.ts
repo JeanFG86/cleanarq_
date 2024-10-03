@@ -12,7 +12,7 @@ export default class GetRide {
     const ride = await this.rideRepository?.getRideById(rideId);
     if (!ride) throw new Error("Ride not found");
     const positions = await this.positionRepository?.getPositionsByRideId(rideId);
-    const distance = ride.getDistance(positions || []);
+    const distance = ride.getStatus() === "completed" ? ride.getDistance() : ride.calculateDistance(positions || []);
     return {
       rideId: ride.getRideId(),
       passengerId: ride.getPassengerId(),
@@ -24,6 +24,7 @@ export default class GetRide {
       driverId: ride.getDriverId(),
       positions: positions || [],
       distance,
+      fare: ride.getFare(),
     };
   }
 }
@@ -39,4 +40,5 @@ type Output = {
   driverId?: string;
   positions: any[];
   distance: number;
+  fare: number;
 };

@@ -14,7 +14,7 @@ export class RideRepositoryDatabase implements RideRepository {
 
   async saveRide(ride: Ride): Promise<void> {
     await this.connection?.query(
-      "insert into ccca.ride (ride_id, passenger_id, from_lat, from_long, to_lat, to_long, status, date) values ($1, $2, $3, $4, $5, $6, $7, $8)",
+      "insert into ccca.ride (ride_id, passenger_id, from_lat, from_long, to_lat, to_long, status, date) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
       [
         ride.getRideId(),
         ride.getPassengerId(),
@@ -24,6 +24,8 @@ export class RideRepositoryDatabase implements RideRepository {
         ride.getTo().getLong(),
         ride.getStatus(),
         ride.getDate(),
+        ride.getDistance(),
+        ride.getFare(),
       ]
     );
   }
@@ -40,17 +42,18 @@ export class RideRepositoryDatabase implements RideRepository {
       parseFloat(rideData.to_long),
       rideData.status,
       rideData.date,
-      rideData.driver_id
+      rideData.driver_id,
+      rideData.distance,
+      rideData.fare
     );
   }
 
   async updateRide(ride: Ride): Promise<void> {
     console.log(ride);
     console.log(ride.getStatus());
-    await this.connection?.query("update ccca.ride set status = $1, driver_id = $2 where ride_id = $3", [
-      ride.getStatus(),
-      ride.getDriverId(),
-      ride.getRideId(),
-    ]);
+    await this.connection?.query(
+      "update ccca.ride set status = $1, driver_id = $2, distance = $3, fare = $4 where ride_id = $5",
+      [ride.getStatus(), ride.getDriverId(), ride.getDistance(), ride.getFare(), ride.getRideId()]
+    );
   }
 }
