@@ -97,15 +97,15 @@ describe("Update position test", () => {
       long: -48.522234807851476,
     };
     await updatePosition.execute(inputUpdatePosition4);
-    const outputGetRide = await getRide.execute(outputRequestRide.rideId);
+
     const inputFinishRide = {
       rideId: outputRequestRide.rideId,
     };
     await finishRide.execute(inputFinishRide);
+    const outputGetRide = await getRide.execute(outputRequestRide.rideId);
     expect(outputGetRide.distance).toBe(30);
     expect(outputGetRide.fare).toBe(63);
     expect(outputGetRide.status).toBe("completed");
-    console.log(outputGetRide.positions);
   });
 
   afterEach(async () => {

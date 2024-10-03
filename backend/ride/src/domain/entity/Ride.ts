@@ -94,18 +94,8 @@ export default class Ride {
     this.status.start();
   }
 
-  calculateDistance(positions: Position[]) {
-    let distance = 0;
-    for (const [index, position] of positions.entries()) {
-      const nextPosition = positions[index + 1];
-      if (!nextPosition) continue;
-      distance += DistanceCalculator.calculate(position.coord, nextPosition.coord);
-    }
-    return distance;
-  }
-
   finish(positions: Position[]) {
-    const distance = this.calculateDistance(positions);
+    const distance = DistanceCalculator.calculateByPositions(positions);
     this.distance = distance;
     this.fare = distance * 2.1;
     this.status.finish();
