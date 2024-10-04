@@ -1,10 +1,12 @@
+import Mediator from "../../infra/mediator/Mediator";
+import RideCompletedEvent from "../event/RideCompletedEvent";
 import DistanceCalculator from "../service/DistanceCalculator";
 import Coord from "../vo/Coord";
 import RideStatus, { RideStatusFactory } from "../vo/RideStatus";
 import UUID from "../vo/UUID";
 import Position from "./Position";
 
-export default class Ride {
+export default class Ride extends Mediator {
   private rideId: UUID;
   private passengerId: UUID;
   private driverId?: UUID;
@@ -26,6 +28,7 @@ export default class Ride {
     private distance: number = 0,
     private fare: number = 0
   ) {
+    super();
     this.rideId = new UUID(rideId);
     this.passengerId = new UUID(passengerId);
     if (driverId) this.driverId = new UUID(driverId);
@@ -99,6 +102,8 @@ export default class Ride {
     this.distance = distance;
     this.fare = distance * 2.1;
     this.status.finish();
+    const event = new RideCompletedEvent(this.getRideId(), this.getFare());
+    this.notify(RideCompletedEvent.eventName, event);
   }
 
   getDate() {

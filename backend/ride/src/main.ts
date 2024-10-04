@@ -8,8 +8,16 @@ import { ExpressAdapter } from "./infra/http/HttpServer";
 import AccountController from "./infra/controller/AccountController";
 import { PositionRepositoryDatabase } from "./infra/repository/PositionRepository";
 import { RideRepositoryDatabase } from "./infra/repository/RideRepository";
+import ProcessPayment from "./application/usecase/ProcessPayment";
+import Mediator from "./infra/mediator/Mediator";
 
 const httpServer = new ExpressAdapter();
+const processPayment = new ProcessPayment();
+const mediator = new Mediator();
+mediator.register("rideCompeted", async function (event: any) {
+  await processPayment.execute(event);
+});
+Registry.getInstance().provide("mediator", mediator);
 Registry.getInstance().provide("httpServer", httpServer);
 Registry.getInstance().provide("databaseConnection", new PgPromiseAdapter());
 Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
