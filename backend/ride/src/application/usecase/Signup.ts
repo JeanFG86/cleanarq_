@@ -17,7 +17,8 @@ export default class Signup {
       input.carPlate,
       input.password,
       input.isPassenger,
-      input.isDriver
+      input.isDriver,
+      input.passwordType || "textplain"
     );
     const accountData = await this.accountRepository?.getAccountByEmail(input.email);
     if (accountData) throw new Error("Duplicated account");
