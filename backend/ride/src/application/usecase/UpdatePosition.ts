@@ -12,7 +12,7 @@ export default class UpdatePosition {
   async execute(input: Input): Promise<void> {
     const ride = await this.rideRepository?.getRideById(input.rideId);
     if (!ride) throw new Error();
-    const position = Position.create(input.rideId, input.lat, input.long);
+    const position = Position.create(input.rideId, input.lat, input.long, input.date);
     await this.positionRepository?.savePosition(position);
   }
 }
@@ -21,4 +21,5 @@ type Input = {
   rideId: string;
   lat: number;
   long: number;
+  date: Date;
 };
