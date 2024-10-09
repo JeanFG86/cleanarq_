@@ -1,28 +1,22 @@
-import { AccountRepositoryDatabase } from "../src/infra/repository/AccountRepository";
 import { PgPromiseAdapter } from "../src/infra/database/DatabaseConnection";
 import { Registry } from "../src/infra/di/DI";
-import GetAccount from "../src/application/usecase/GetAccount";
 import GetRide from "../src/application/usecase/GetRide";
-import { MailerGatewayMemory } from "../src/infra/gateway/MailerGateway";
 import RequestRide from "../src/application/usecase/RequestRide";
 import { RideRepositoryDatabase } from "../src/infra/repository/RideRepository";
-import Signup from "../src/application/usecase/Signup";
 import { PositionRepositoryDatabase } from "../src/infra/repository/PositionRepository";
+import AccountGateway from "../src/infra/gateway/AccountGateway";
 
 describe("RequestRide", () => {
-  let signup: Signup;
-  let getAccount: GetAccount;
+  let accountGateway: AccountGateway;
   let requestRide: RequestRide;
   let getRide: GetRide;
 
   beforeEach(() => {
+    accountGateway = new AccountGateway();
+    Registry.getInstance().provide("accountGateway", new AccountGateway());
     Registry.getInstance().provide("databaseConnection", new PgPromiseAdapter());
-    Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
     Registry.getInstance().provide("rideRepository", new RideRepositoryDatabase());
-    Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory());
     Registry.getInstance().provide("positionRepository", new PositionRepositoryDatabase());
-    signup = new Signup();
-    getAccount = new GetAccount();
     requestRide = new RequestRide();
     getRide = new GetRide();
   });
@@ -34,7 +28,7 @@ describe("RequestRide", () => {
       password: "123456",
       isPassenger: true,
     };
-    const outputSignup = await signup.execute(inputSignup);
+    const outputSignup = await accountGateway.signup(inputSignup);
     const inputRequestRide = {
       passengerId: outputSignup.accountId,
       fromLat: -27.584905257808835,
@@ -63,7 +57,7 @@ describe("RequestRide", () => {
       carPlate: "AAA9999",
       isDriver: true,
     };
-    const outputSignup = await signup.execute(inputSignup);
+    const outputSignup = await accountGateway.signup(inputSignup);
     const inputRequestRide = {
       passengerId: outputSignup.accountId,
       fromLat: -27.584905257808835,

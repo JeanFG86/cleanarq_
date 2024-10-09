@@ -1,23 +1,18 @@
 import AcceptRide from "../src/application/usecase/AcceptRide";
 import FinishRide from "../src/application/usecase/FinishRide";
-import GetAccount from "../src/application/usecase/GetAccount";
 import GetRide from "../src/application/usecase/GetRide";
-import ProcessPayment from "../src/application/usecase/ProcessPayment";
 import RequestRide from "../src/application/usecase/RequestRide";
-import Signup from "../src/application/usecase/Signup";
 import StartRide from "../src/application/usecase/StartRide";
 import UpdatePosition from "../src/application/usecase/UpdatePosition";
 import { PgPromiseAdapter } from "../src/infra/database/DatabaseConnection";
 import { Registry } from "../src/infra/di/DI";
-import { MailerGatewayMemory } from "../src/infra/gateway/MailerGateway";
-import Mediator from "../src/infra/mediator/Mediator";
-import { AccountRepositoryDatabase } from "../src/infra/repository/AccountRepository";
+import AccountGateway from "../src/infra/gateway/AccountGateway";
+import PaymentGateway from "../src/infra/gateway/PaymentGateway";
 import { PositionRepositoryDatabase } from "../src/infra/repository/PositionRepository";
 import { RideRepositoryDatabase } from "../src/infra/repository/RideRepository";
 
 describe("Finish ride test", () => {
-  let signup: Signup;
-  let getAccount: GetAccount;
+  let accountGateway: AccountGateway;
   let requestRide: RequestRide;
   let getRide: GetRide;
   let acceptRide: AcceptRide;
@@ -26,19 +21,12 @@ describe("Finish ride test", () => {
   let finishRide: FinishRide;
 
   beforeEach(() => {
-    const processPayment = new ProcessPayment();
-    const mediator = new Mediator();
-    mediator.register("rideCompeted", async function (event: any) {
-      await processPayment.execute(event);
-    });
+    accountGateway = new AccountGateway();
+    Registry.getInstance().provide("accountGateway", new AccountGateway());
     Registry.getInstance().provide("databaseConnection", new PgPromiseAdapter());
-    Registry.getInstance().provide("mediator", mediator);
-    Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
+    Registry.getInstance().provide("paymentGateway", new PaymentGateway());
     Registry.getInstance().provide("rideRepository", new RideRepositoryDatabase());
     Registry.getInstance().provide("positionRepository", new PositionRepositoryDatabase());
-    Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory());
-    signup = new Signup();
-    getAccount = new GetAccount();
     requestRide = new RequestRide();
     getRide = new GetRide();
     acceptRide = new AcceptRide();
@@ -54,7 +42,7 @@ describe("Finish ride test", () => {
       password: "123456",
       isPassenger: true,
     };
-    const outputSignupPassenger = await signup.execute(inputSignupPassenger);
+    const outputSignupPassenger = await accountGateway.signup(inputSignupPassenger);
     const inputSignupDriver = {
       name: "John Doe",
       email: `john.doe${Math.random()}@gmail.com`,
@@ -63,7 +51,7 @@ describe("Finish ride test", () => {
       carPlate: "AAA9999",
       isDriver: true,
     };
-    const outputSignupDriver = await signup.execute(inputSignupDriver);
+    const outputSignupDriver = await accountGateway.signup(inputSignupDriver);
     const inputRequestRide = {
       passengerId: outputSignupPassenger.accountId,
       fromLat: -27.584905257808835,
@@ -127,7 +115,7 @@ describe("Finish ride test", () => {
       password: "123456",
       isPassenger: true,
     };
-    const outputSignupPassenger = await signup.execute(inputSignupPassenger);
+    const outputSignupPassenger = await accountGateway.signup(inputSignupPassenger);
     const inputSignupDriver = {
       name: "John Doe",
       email: `john.doe${Math.random()}@gmail.com`,
@@ -136,7 +124,7 @@ describe("Finish ride test", () => {
       carPlate: "AAA9999",
       isDriver: true,
     };
-    const outputSignupDriver = await signup.execute(inputSignupDriver);
+    const outputSignupDriver = await accountGateway.signup(inputSignupDriver);
     const inputRequestRide = {
       passengerId: outputSignupPassenger.accountId,
       fromLat: -27.584905257808835,
@@ -200,7 +188,7 @@ describe("Finish ride test", () => {
       password: "123456",
       isPassenger: true,
     };
-    const outputSignupPassenger = await signup.execute(inputSignupPassenger);
+    const outputSignupPassenger = await accountGateway.signup(inputSignupPassenger);
     const inputSignupDriver = {
       name: "John Doe",
       email: `john.doe${Math.random()}@gmail.com`,
@@ -209,7 +197,7 @@ describe("Finish ride test", () => {
       carPlate: "AAA9999",
       isDriver: true,
     };
-    const outputSignupDriver = await signup.execute(inputSignupDriver);
+    const outputSignupDriver = await accountGateway.signup(inputSignupDriver);
     const inputRequestRide = {
       passengerId: outputSignupPassenger.accountId,
       fromLat: -27.584905257808835,

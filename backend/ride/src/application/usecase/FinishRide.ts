@@ -1,6 +1,6 @@
 import RideCompletedEvent from "../../domain/event/RideCompletedEvent";
 import { inject } from "../../infra/di/DI";
-import Mediator from "../../infra/mediator/Mediator";
+import PaymentGateway from "../../infra/gateway/PaymentGateway";
 import PositionRepository from "../../infra/repository/PositionRepository";
 import RideRepository from "../../infra/repository/RideRepository";
 
@@ -9,15 +9,15 @@ export default class FinishRide {
   rideRepository?: RideRepository;
   @inject("positionRepository")
   positionRepository?: PositionRepository;
-  @inject("mediator")
-  mediator!: Mediator;
+  @inject("paymentGateway")
+  paymentGateway?: PaymentGateway;
 
   async execute(input: Input): Promise<void> {
     const ride = await this.rideRepository?.getRideById(input.rideId);
     if (!ride) throw new Error();
     ride.register(RideCompletedEvent.eventName, async (event: any) => {
       await this.rideRepository?.updateRide(ride);
-      await this.mediator.notify(RideCompletedEvent.eventName, event);
+      await this.paymentGateway?.processPayment(event);
     });
     const positions = await this.positionRepository?.getPositionsByRideId(input.rideId);
     ride.finish(positions!);

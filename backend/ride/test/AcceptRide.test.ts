@@ -1,30 +1,24 @@
 import AcceptRide from "../src/application/usecase/AcceptRide";
-import GetAccount from "../src/application/usecase/GetAccount";
 import GetRide from "../src/application/usecase/GetRide";
 import RequestRide from "../src/application/usecase/RequestRide";
-import Signup from "../src/application/usecase/Signup";
 import { PgPromiseAdapter } from "../src/infra/database/DatabaseConnection";
 import { Registry } from "../src/infra/di/DI";
-import { MailerGatewayMemory } from "../src/infra/gateway/MailerGateway";
-import { AccountRepositoryDatabase } from "../src/infra/repository/AccountRepository";
+import AccountGateway from "../src/infra/gateway/AccountGateway";
 import { PositionRepositoryDatabase } from "../src/infra/repository/PositionRepository";
 import { RideRepositoryDatabase } from "../src/infra/repository/RideRepository";
 
 describe("", () => {
-  let signup: Signup;
-  let getAccount: GetAccount;
+  let accountGateway: AccountGateway;
   let requestRide: RequestRide;
   let getRide: GetRide;
   let acceptRide: AcceptRide;
 
   beforeEach(() => {
+    accountGateway = new AccountGateway();
+    Registry.getInstance().provide("accountGateway", new AccountGateway());
     Registry.getInstance().provide("databaseConnection", new PgPromiseAdapter());
-    Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
     Registry.getInstance().provide("rideRepository", new RideRepositoryDatabase());
-    Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory());
     Registry.getInstance().provide("positionRepository", new PositionRepositoryDatabase());
-    signup = new Signup();
-    getAccount = new GetAccount();
     requestRide = new RequestRide();
     getRide = new GetRide();
     acceptRide = new AcceptRide();
@@ -38,7 +32,7 @@ describe("", () => {
       password: "123456",
       isPassenger: true,
     };
-    const outputSignupPassenger = await signup.execute(inputSignupPassenger);
+    const outputSignupPassenger = await accountGateway.signup(inputSignupPassenger);
     const inputSignupDriver = {
       name: "John Doe",
       email: `john.doe${Math.random()}@gmail.com`,
@@ -47,7 +41,7 @@ describe("", () => {
       carPlate: "AAA9999",
       isDriver: true,
     };
-    const outputSignupDriver = await signup.execute(inputSignupDriver);
+    const outputSignupDriver = await accountGateway.signup(inputSignupDriver);
     const inputRequestRide = {
       passengerId: outputSignupPassenger.accountId,
       fromLat: -27.584905257808835,
@@ -74,7 +68,7 @@ describe("", () => {
       password: "123456",
       isPassenger: true,
     };
-    const outputSignupPassenger = await signup.execute(inputSignupPassenger);
+    const outputSignupPassenger = await accountGateway.signup(inputSignupPassenger);
     const inputSignupDriver = {
       name: "John Doe",
       email: `john.doe${Math.random()}@gmail.com`,
@@ -83,7 +77,7 @@ describe("", () => {
       carPlate: "AAA9999",
       isDriver: true,
     };
-    const outputSignupDriver = await signup.execute(inputSignupDriver);
+    const outputSignupDriver = await accountGateway.signup(inputSignupDriver);
     const inputRequestRide = {
       passengerId: outputSignupPassenger.accountId,
       fromLat: -27.584905257808835,
