@@ -8,6 +8,7 @@ import { PgPromiseAdapter } from "../src/infra/database/DatabaseConnection";
 import { Registry } from "../src/infra/di/DI";
 import AccountGateway from "../src/infra/gateway/AccountGateway";
 import PaymentGateway from "../src/infra/gateway/PaymentGateway";
+import { RabbitMQAdapter } from "../src/infra/queue/Queue";
 import { PositionRepositoryDatabase } from "../src/infra/repository/PositionRepository";
 import { RideRepositoryDatabase } from "../src/infra/repository/RideRepository";
 
@@ -20,9 +21,12 @@ describe("Finish ride test", () => {
   let updatePosition: UpdatePosition;
   let finishRide: FinishRide;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     accountGateway = new AccountGateway();
+    const queue = new RabbitMQAdapter();
+    await queue.connect();
     Registry.getInstance().provide("accountGateway", new AccountGateway());
+    Registry.getInstance().provide("queue", queue);
     Registry.getInstance().provide("databaseConnection", new PgPromiseAdapter());
     Registry.getInstance().provide("paymentGateway", new PaymentGateway());
     Registry.getInstance().provide("rideRepository", new RideRepositoryDatabase());
