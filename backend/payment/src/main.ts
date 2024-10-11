@@ -4,10 +4,12 @@ import { ExpressAdapter } from "./infra/http/HttpServer";
 import AccountController from "./infra/controller/ProcessPayment";
 import ProcessPayment from "./application/usecase/ProcessPayment";
 import CieloGateway from "./infra/gateway/CieloGateway";
+import { PaymentProcessorFactory } from "./infra/fallback/PaymentProcessor";
 
 const httpServer = new ExpressAdapter();
 Registry.getInstance().provide("httpServer", httpServer);
 Registry.getInstance().provide("databaseConnection", new PgPromiseAdapter());
+Registry.getInstance().provide("paymentProcessor", PaymentProcessorFactory.create());
 Registry.getInstance().provide("paymentGateway", new CieloGateway());
 Registry.getInstance().provide("processPayment", new ProcessPayment());
 Registry.getInstance().provide("accountController", new AccountController());

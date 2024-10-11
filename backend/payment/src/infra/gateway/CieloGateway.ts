@@ -1,8 +1,8 @@
-import PaymentGateway from "./PaymentGateway";
+import PaymentGateway, { Input, Output } from "./PaymentGateway";
 import axios from "axios";
 
 export default class CieloGateway implements PaymentGateway {
-  async createTransaction(input: any): Promise<{ tid: string; authorizationCode: string; status: string }> {
+  async createTransaction(input: Input): Promise<Output> {
     console.log("processing cielo");
     let transaction = {
       MerchantOrderId: "2014111701",
@@ -66,6 +66,14 @@ export default class CieloGateway implements PaymentGateway {
       data: transaction,
     };
     const output = (await axios(request)).data;
-    return output;
+    let status = "rejected";
+    if (output.Payment.ReturnCode === "4") {
+      status = "approved";
+    }
+    return {
+      tid: output.Payment.Tid,
+      authorizationCode: output.Payment.AuthorizationCode,
+      status,
+    };
   }
 }

@@ -1,8 +1,9 @@
 import { inject } from "../di/DI";
+import PaymentProcessor from "../fallback/PaymentProcessor";
 import PaymentGateway from "../gateway/PaymentGateway";
 export default class ProcessPayment {
-  @inject("paymentGateway")
-  paymentGateway!: PaymentGateway;
+  @inject("paymentProcessor")
+  paymentProcessor!: PaymentProcessor;
 
   async execute(input: Input): Promise<void> {
     console.log("processPayment", input);
@@ -13,7 +14,15 @@ export default class ProcessPayment {
       cvv: "123",
       amount: input.amount,
     };
-    await this.paymentGateway.createTransaction(inputTransaction);
+    try {
+      const outputCreateTransaction = await this.paymentProcessor.processPayment(inputTransaction);
+      console.log(outputCreateTransaction);
+      if (outputCreateTransaction.status === "approved") {
+        console.log("pago com sucesso");
+      }
+    } catch (e: any) {
+      console.log(e.message);
+    }
   }
 }
 
